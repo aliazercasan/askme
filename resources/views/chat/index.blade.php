@@ -8,7 +8,7 @@
     <!-- Auth Modal -->
     <div x-show="showAuthModal" 
          x-cloak
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50"
          @click.self="showAuthModal = false">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
             <div class="flex flex-col items-center mb-6">
@@ -42,7 +42,7 @@
     <!-- Alert/Confirm Modal -->
     <div x-show="modal.show" 
          x-cloak
-         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+         class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50"
          @click.self="modal.show = false">
         <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 class="text-lg font-semibold mb-4" x-text="modal.title"></h3>
