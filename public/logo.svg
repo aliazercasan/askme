@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#2563eb" />
+  
+  <!-- Question mark -->
+  <path d="M 100 60 Q 120 60 120 80 Q 120 95 100 100 L 100 110" 
+        stroke="white" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        fill="none"/>
+  <circle cx="100" cy="130" r="6" fill="white"/>
+  
+  <!-- Chat bubble outline -->
+  <path d="M 50 40 L 150 40 Q 160 40 160 50 L 160 120 Q 160 130 150 130 L 110 130 L 90 150 L 90 130 L 50 130 Q 40 130 40 120 L 40 50 Q 40 40 50 40 Z" 
+        stroke="white" 
+        stroke-width="4" 
+        fill="none"
+        opacity="0.3"/>
+</svg>
