@@ -89,7 +89,115 @@
         </div>
 
         <div class="flex h-screen overflow-hidden">
-            <!-- Sidebar - Responsive -->
+            <!-- Mobile Sidebar Overlay -->
+            <div x-show="sidebarOpen" 
+                 x-cloak
+                 @click="sidebarOpen = false"
+                 x-transition:enter="transition-opacity ease-linear duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition-opacity ease-linear duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden">
+            </div>
+
+            <!-- Mobile Sidebar -->
+            <div x-show="sidebarOpen"
+                 x-cloak
+                 x-transition:enter="transition ease-in-out duration-300 transform"
+                 x-transition:enter-start="-translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in-out duration-300 transform"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="-translate-x-full"
+                 class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col shadow-2xl z-50 lg:hidden">
+                
+                <!-- Mobile Sidebar Header -->
+                <div class="p-6 border-b border-slate-700/50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-2 rounded-xl">
+                            <img src="/logo.svg" alt="Ask Me Logo" class="h-8 w-8">
+                        </div>
+                        <h2 class="text-xl font-bold">Ask Me</h2>
+                    </div>
+                    <button @click="sidebarOpen = false" class="p-2 hover:bg-slate-700/50 rounded-lg transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="p-4 border-b border-slate-700/50">
+                    <button @click="newChat; sidebarOpen = false" 
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 py-3.5 px-6 rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        New Chat
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4 space-y-2">
+                    @auth
+                        @foreach ($conversations as $conv)
+                            <div @click="loadConversation({{ $conv->id }}); sidebarOpen = false"
+                                :class="conversationId === {{ $conv->id }} ? 'bg-indigo-600/20 border-indigo-500/50' : 'bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50'"
+                                class="p-4 rounded-xl cursor-pointer transition-all duration-200 group relative border backdrop-blur-sm">
+                                <p class="text-sm font-medium truncate pr-8">{{ $conv->title }}</p>
+                                <p class="text-xs text-slate-400 mt-1">{{ $conv->updated_at->diffForHumans() }}</p>
+                                <button @click.stop="deleteConversation({{ $conv->id }})"
+                                    class="absolute right-3 top-4 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-all duration-200 bg-slate-900/80 rounded-lg p-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="text-center text-slate-400 p-8">
+                            <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <p class="font-medium">Guest Mode</p>
+                            <p class="text-xs mt-2 text-slate-500">Conversations are not saved</p>
+                        </div>
+                    @endauth
+                </div>
+
+                <div class="border-t border-slate-700/50 p-6 bg-slate-900/50 backdrop-blur-sm">
+                    @auth
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center font-bold text-lg">
+                                {{ substr(auth()->user()->name, 0, 1) }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-slate-400 truncate">{{ auth()->user()->email }}</p>
+                            </div>
+                        </div>
+                        <form method="POST" action="/logout">
+                            @csrf
+                            <button class="w-full text-sm text-slate-400 hover:text-white py-2 px-4 rounded-lg hover:bg-slate-800/50 transition-all duration-200 text-left">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Logout
+                            </button>
+                        </form>
+                    @else
+                        <div class="text-center">
+                            <p class="text-xs text-slate-400 mb-3">Guest Mode Active</p>
+                            <button @click="showAuthModal = true; sidebarOpen = false" 
+                                class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 py-2.5 px-4 rounded-lg transition-all duration-200 text-sm font-medium border border-indigo-500/30">
+                                Login / Register
+                            </button>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+
+            <!-- Desktop Sidebar -->
             <div class="hidden lg:flex lg:w-80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex-col shadow-2xl">
                 <div class="p-6 border-b border-slate-700/50">
                     <button @click="newChat" 
