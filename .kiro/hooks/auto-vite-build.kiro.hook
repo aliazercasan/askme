@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Auto Vite Build",
+  "description": "Automatically runs npm run build when CSS or JS files are saved to rebuild Vite assets",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "resources/css/*.css",
+      "resources/js/*.js",
+      "resources/views/**/*.blade.php"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run npm run build to rebuild the Vite assets after the file changes"
+  }
+}
